@@ -1,4 +1,6 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://machine-front-production.up.railway.app";
 
 export type SummaryPoint = {
   name: string;
@@ -43,7 +45,10 @@ export type CategoryOptions = {
 };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init });
+  const response = await fetch(`${API_URL}${path}`, {
+    cache: "no-store",
+    ...init,
+  });
   if (!response.ok) {
     const detail = await response.text();
     throw new Error(detail || "Error de comunicacion con el backend");
@@ -56,14 +61,15 @@ export const api = {
   reviews: (query = "") => request<Review[]>(`/reviews${query}`),
   categories: () => request<CategoryOptions>("/categories"),
   predict: (payload: Record<string, string>) =>
-    request<{ predicted_classification: string; prediction_confidence: number | null; recommendation: string }>(
-      "/predict",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }
-    ),
+    request<{
+      predicted_classification: string;
+      prediction_confidence: number | null;
+      recommendation: string;
+    }>("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }),
   uploadCsv: (file: File) => {
     const form = new FormData();
     form.append("file", file);
@@ -75,7 +81,7 @@ export const api = {
       prediction_warnings: string[];
     }>("/upload-csv", {
       method: "POST",
-      body: form
+      body: form,
     });
-  }
+  },
 };
