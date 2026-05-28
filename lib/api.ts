@@ -1,6 +1,6 @@
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000";
+  "https://machine-front-production.up.railway.app";
 
 export const TOKEN_KEY = "element_elite_fleet_token";
 
@@ -84,7 +84,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     let message = "Error de comunicacion con el backend";
     try {
       const body = await response.json();
-      message = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail || body);
+      message =
+        typeof body.detail === "string"
+          ? body.detail
+          : JSON.stringify(body.detail || body);
     } catch {
       message = await response.text();
     }
@@ -101,14 +104,22 @@ export const api = {
       body: JSON.stringify(payload),
     }),
   me: () => request<Employee>("/auth/me"),
-  registerEmployee: (payload: { name: string; email: string; password: string; role: string }) =>
+  registerEmployee: (payload: {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+  }) =>
     request<Employee>("/auth/register-employee", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }),
   employees: () => request<Employee[]>("/employees"),
-  updateEmployee: (id: number, payload: { name?: string; email?: string; role?: string }) =>
+  updateEmployee: (
+    id: number,
+    payload: { name?: string; email?: string; role?: string },
+  ) =>
     request<Employee>(`/employees/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -118,7 +129,11 @@ export const api = {
     request<{ message: string }>(`/employees/${id}`, {
       method: "DELETE",
     }),
-  changePassword: (payload: { current_password: string; new_password: string; confirm_password: string }) =>
+  changePassword: (payload: {
+    current_password: string;
+    new_password: string;
+    confirm_password: string;
+  }) =>
     request<{ message: string }>("/auth/change-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
